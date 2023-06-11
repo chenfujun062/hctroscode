@@ -6,7 +6,7 @@ include/generated
 cscope.*
 .cscope
 .vscode
-dl
+#dl
 .tmp
 .*.swp
 *.tar.bz2
