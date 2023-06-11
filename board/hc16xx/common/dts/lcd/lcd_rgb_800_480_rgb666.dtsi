@@ -8,8 +8,8 @@
 		* "i2so"		: I2S OUT
 		* "gpio"		: only GPIO out
 		*/
-	lvds_ch0-type = "rgb666";
-	lvds_ch1-type = "rgb666";
+	lvds_ch0-type = "rgb888";
+	lvds_ch1-type = "rgb888";
 
 	/*
 		* rgb ggb bgb 
@@ -17,8 +17,9 @@
 		* rgr rgg rgb
 	*/
 	rgb_src_sel = "rgb";
+	rgb-clk-inv = <1>;
 	pinmux-rgb666 = <PINPAD_B04 4 PINPAD_B07 4>; /*RGB666 other pin set*/
-
+	pinmux-rgb888 = <PINPAD_B00 1 PINPAD_B01 1 PINPAD_B02 1 PINPAD_B03 1 PINPAD_B04 1 PINPAD_B05 1 PINPAD_B06 1 PINPAD_B07 1>;
 
 	/*
 	* 0: E_SRC_SEL_FXDE = 0
@@ -26,7 +27,7 @@
 	* 2: E_SRC_SEL_HDMI_RX
 	*/
 	src-sel = <CONFIG_DE4K_OUTPUT_SUPPORT>;
-	// status = "okay";
+	status = "okay";
 };
 &DE {
 	tvtype = <15>;
@@ -43,7 +44,7 @@
 			 * 1: MODE_PRGB_666
 			 */
 			prgb-mode = <0>; 
-			lcd-width = <800>;
+			lcd-width = <480>;
 			b-disable-ejtag = <1>;
 			b-dlpc-enale = <0>;
 			timing-para {
@@ -65,21 +66,22 @@
 				 * VPO_RGB_CLOCK_54M = 13,//H1600
 				 * VPO_RGB_CLOCK_132M = 14,//H1600
 				*/
+				
 				output-clock = <1>;
 
-				h-total-len = <1026>;
-				v-total-len = <525>;
+				h-total-len = <525>; //552  525
+				v-total-len = <874>; //494  874
 
-				h-active-len = <800>;
-				v-active-len = <480>;
+				h-active-len = <480>;
+				v-active-len = <360>;
 
-				h-front-len = <210>;
-				h-sync-len = <6>;
-				h-back-len = <10>;
+				h-front-len = <45>;
+				h-sync-len = <5>;
+				h-back-len = <22>;
 
-				v-front-len = <22>;
-				v-sync-len = <3>;
-				v-back-len = <20>;
+				v-front-len = <74>;
+				v-sync-len = <10>;
+				v-back-len = <50>;
 				/* bool type, 0 or 1*/
 				h-sync-level = <0>;
 				/* bool type, 0 or 1*/
@@ -87,7 +89,7 @@
 
 				/* bool type, 0 or 1*/
 				active-polarity = <1>;
-				frame-rate = <50000>;
+				frame-rate = <600000>;
 			};
 		};
 	};

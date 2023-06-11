@@ -137,8 +137,8 @@ hcrtos {
 	};
 
 	standby {
-		adc = <4 0 100>;
-		ir = <28 0XA8>;  	// key val
+		ir = <0x100>;  	// key val
+		adc = <4 0 900>;
 	};
 
 	hdmi_i2cs {
@@ -190,7 +190,7 @@ hcrtos {
 
 		pinmux-active = <PINPAD_T00 249 PINPAD_T01 249 PINPAD_T02 249 PINPAD_T03 249 PINPAD_T04 249 PINPAD_T05 249 PINPAD_T14 0>;
 
-		status = "okay";
+		status = "disabled";
 	
 		// bus-width = <8>;
 		bus-width = <4>;
@@ -301,7 +301,7 @@ hcrtos {
 		device_type = "hichip,hcrtos-setup-setbit";
 		reg_bit = <0xb8800094 19 1>,<0xb8800094 20 1>;
 		devpath = "/dev/uart1";
-		status = "okay";
+		status = "disabled";
 	};
 
 	uart@2 {
@@ -364,13 +364,13 @@ hcrtos {
 
 	bluetooth {
 		devpath = "/dev/uart1";
-		status = "okay";
+		status = "disabled";
 	};
 
 	i2s {
 		pinmux-clock = <PINPAD_B13 3 PINPAD_B15 3 PINPAD_B16 3>;
 		status = "okay";
-		ejtag = "okay";
+		//ejtag = "disabled";
 	};
 
 	cs4344 {
@@ -458,7 +458,7 @@ hcrtos {
 
 	irc {
 		pinmux-active = <PINPAD_B18 10>;
-		linux,rc-map-name = "rc-projector-c2";
+		linux,rc-map-name = "rc-projector-c1";
 		status = "okay";
 	};
 	
@@ -468,17 +468,13 @@ hcrtos {
 
 	key-adc@4 {
 		status = "okay";
-		adc_ref_voltage = <1890>; //range:0-2000mV
-        key-num = <9>;
-        key-map = 	<0 50 116>,//power
-					<100 300 174>,//exit
-					<350 480 106>,//right
-                    <500 650 103>,//up
-					<680 800 0x160>,//OK
-					<900 1100 108>,//down
-					<1120 1290 105>,//left
-					<1300 1450 0x16d>,//menu
-					<1600 1750 139>;//source
+        key-num = <6>;          //demo---map2--projector
+        key-map = <0 900 116>,// up 0.41 ->left
+		<1000 1100  106>,// down 0.75 ->right
+		<1200 1300 105>,//left 1.02 -> power
+		<1330 1530 0x160>,//right 1.23->setup
+		<1550 1650 139>,//OK 1.43->ok
+		<1660 1840 174>;//exit 1.74->exit
 	};
 	
 	persistentmem {
@@ -512,15 +508,15 @@ hcrtos {
 				part2-filename = "hrxkey.bin";
 				
 				part3-label = "eromfs";
-				part3-reg = <0x60000 0x20000>;
+				part3-reg = <0x60000 0xa0000>;
 				part3-filename = "romfs.img";
 
 				part4-label = "firmware";
-				part4-reg = <0x80000 0x360000>;
+				part4-reg = <0x100000 0x480000>;
 				part4-filename = "projector.uImage";
 
 				part5-label = "persistentmem";
-				part5-reg = <0x3e0000 0x20000>;
+				part5-reg = <0x580000 0x20000>;
 				part5-filename = "persistentmem.bin";
 			};
 		};
@@ -533,22 +529,23 @@ hcrtos {
 		};
 	};
 	
-	lcd-nt35510{
-		spi-gpio-sck	= <PINPAD_L03>;
-		spi-gpio-mosi	= <PINPAD_L02>;
-		spi-gpio-cs		= <PINPAD_L01>;
+	lcd-st7701{
+		spi-gpio-sck	= <PINPAD_T03>;
+		spi-gpio-mosi	= <PINPAD_T05>;
+		spi-gpio-cs		= <PINPAD_T04>;
+		reset 			= <PINPAD_T02>;
 		default-off;
 		status = "okay";
 	};
 	lcd{
-		lcd-map-name = "lcd-nt35510";
+		lcd-map-name = "lcd-st7701";
 		default-off;
 		status = "okay";
 	};
 
 	lvds: lvds@0xb8860000 {
-		lcd-power-gpios-rtos =<PINPAD_R04 GPIO_ACTIVE_HIGH PINPAD_R07 GPIO_ACTIVE_HIGH PINPAD_R00 GPIO_ACTIVE_LOW PINPAD_R08 GPIO_ACTIVE_HIGH PINPAD_R04 GPIO_ACTIVE_HIGH PINPAD_R10 GPIO_ACTIVE_HIGH>;
 		lcd-backlight-gpios-rtos = <PINPAD_B21 GPIO_ACTIVE_HIGH>;
+		lcd-power-gpios-rtos = <PINPAD_T00 GPIO_ACTIVE_HIGH PINPAD_T19 GPIO_ACTIVE_HIGH>; 
 		device_type = "hichip,hcrtos-setup-setbit";
 		reg_bit = <0xb8800094 16 1>;
 		status = "okay";
@@ -594,14 +591,14 @@ hcrtos {
 
 	fb0 {
 		bits_per_pixel = <32>;
-		xres = <720>;
-		yres = <1280>;
-		xres_virtual = <720>;
-		yres_virtual = <1280>;
+		xres = <480>;
+		yres = <360>;
+		xres_virtual = <480>;
+		yres_virtual = <360>;
 		xoffset = <0>;
 		yoffset = <0>;
 
-		scale = <720 1280 800 480>;
+		scale = <480 360 480 360>;
 
 		reg = <CONFIG_FB0_REG 0x1000>;
 		/*
@@ -628,7 +625,7 @@ hcrtos {
 		xoffset = <0>;
 		yoffset = <0>;
 
-		scale = <720 1280 800 480>;
+		scale = <720 1280 360 480>;
 
 		reg = <CONFIG_FB0_REG 0x1000>;
 		/*
@@ -674,20 +671,20 @@ hcrtos {
 		 * anticlockwise,
 		 * support 0/90/180/270 degree.
 		 */
-		rotate = <270>;
+		rotate = <0>;
 
 		/*
 		* value is 0 or 1, support fliping may use more fb memory
 		* flip_support = 1, support fb fliped
 		*/
-		flip_support = <1>;
+		flip_support = <0>;
 
 		/*
 		 * value is 0 or 1
 		 * h_flip = 1 is horizontally fliped
 		 * v_flip = 1 is vertically fliped
 		 */
-		h_flip = <1>;
+		h_flip = <0>;
 		v_flip = <0>;
 
 		status = "okay";
@@ -722,7 +719,7 @@ hcrtos {
 		enable-delay-ms = <120>;
 		prepare-delay-ms = <500>;
 
-		status = "okay";
+		status = "disabled";
 	};
 
 	ge: ge@18806000 {
@@ -766,4 +763,6 @@ hcrtos {
 };
 };
 
-#include "lcd_mipi_ILI9806E_480_800_rgb565.dtsi"
+#include "lcd_rgb_800_480_rgb666.dtsi"
+//#include "lcd_rgb_800_480_rgb565.dtsi"
+//#include "lcd_mipi_ILI9806E_480_800_rgb565.dtsi"
